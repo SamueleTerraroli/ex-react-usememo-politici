@@ -1,5 +1,32 @@
 import React, { useState, useMemo } from 'react';
 
+function PoliticianCard({ name, image, position, biography }) {
+  console.log('card');
+  return (
+
+    <div
+      style={{
+        border: "1px solid #ccc",
+        borderRadius: "8px",
+        padding: "16px",
+        width: "300px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <img
+        src={image}
+        alt={name}
+        style={{ width: "100%", borderRadius: "8px" }}
+      />
+      <h2>{name}</h2>
+      <h4>{position}</h4>
+      <p>{biography}</p>
+    </div>
+  )
+
+}
+const MemorizedPolitician = React.memo(PoliticianCard)
+
 const App = () => {
   const [politicians, setPoliticians] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,30 +69,12 @@ const App = () => {
           borderRadius: "8px",
         }}
       />
-
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {filteredPoliticians.map((politician) => (
-          <div
-            key={politician.id}
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "16px",
-              width: "300px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            <img
-              src={politician.image}
-              alt={politician.name}
-              style={{ width: "100%", borderRadius: "8px" }}
-            />
-            <h2>{politician.name}</h2>
-            <h4>{politician.position}</h4>
-            <p>{politician.biography}</p>
-          </div>
+          <MemorizedPolitician key={politician.id} {...politician} />
         ))}
       </div>
+
     </div>
   );
 };
