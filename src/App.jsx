@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 
-function PoliticianCard({ name, image, position, biography }) {
+const PoliticianCard = React.memo(({ name, image, position, biography }) => {
   console.log('card');
   return (
 
@@ -24,8 +24,7 @@ function PoliticianCard({ name, image, position, biography }) {
     </div>
   )
 
-}
-const MemorizedPolitician = React.memo(PoliticianCard)
+});
 
 const App = () => {
   const [politicians, setPoliticians] = useState([]);
@@ -71,7 +70,7 @@ const App = () => {
       />
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {filteredPoliticians.map((politician) => (
-          <MemorizedPolitician key={politician.id} {...politician} />
+          <PoliticianCard key={politician.id} {...politician} />
         ))}
       </div>
 
