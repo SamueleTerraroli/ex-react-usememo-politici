@@ -29,6 +29,7 @@ const PoliticianCard = React.memo(({ name, image, position, biography }) => {
 const App = () => {
   const [politicians, setPoliticians] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedPosition, setSelectedPosition] = useState('')
 
   // Chiamata API e memorizzazione dei dati
   useMemo(() => {
@@ -45,13 +46,27 @@ const App = () => {
     fetchData();
   }, []);
 
+  const positions = useMemo(() => {
+    return politicians.reduce((acc, politician) => {
+      if (!acc.includes(politician.position)) {
+        acc = [...acc, politician.position];
+      }
+      return acc;
+    }, [])
+
+  }, { politicians });
+
   // Filtraggio dei politici basato sulla ricerca
   const filteredPoliticians = useMemo(() => {
-    return politicians.filter((politician) =>
-      politician.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      politician.biography.toLowerCase().includes(searchQuery.toLowerCase())
+    return politicians.filter((politician) => {
+
+      const isName = politician.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const isBio = politician.biography.toLowerCase().includes(searchQuery.toLowerCase());
+      const isPositionValid = selectedPosition === '' || selectedPosition === politician.position
+      return (isName || isBio) && isPositionValid;
+    }
     );
-  }, [politicians, searchQuery]);
+  }, [politicians, searchQuery, selectedPosition]);
 
   return (
     <div>
@@ -68,6 +83,17 @@ const App = () => {
           borderRadius: "8px",
         }}
       />
+
+      <select
+        value={selectedPosition}
+        onChange={e => setSelectedPosition(e.target.value)}
+      >
+        <option value="">Filtra per posizione</option>
+        {positions.map((position, index) => (
+          <option key={index} value={position}>{position}</option>
+        ))}
+      </select>
+
       <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
         {filteredPoliticians.map((politician) => (
           <PoliticianCard key={politician.id} {...politician} />
